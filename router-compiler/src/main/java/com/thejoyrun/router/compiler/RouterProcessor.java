@@ -10,6 +10,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.thejoyrun.router.RouterActivity;
 import com.thejoyrun.router.RouterField;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import javax.lang.model.util.Elements;
 public class RouterProcessor extends AbstractProcessor {
     private Elements elementUtils;
     private String targetModuleName = "";
+    private String outputModuleName;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -67,7 +69,7 @@ public class RouterProcessor extends AbstractProcessor {
         }
         ClassName activityHelperClassName = ClassName.get("com.thejoyrun.router", "ActivityHelper");
 
-        List<MethodSpec> methodSpecs = new ArrayList<>();
+//        List<MethodSpec> methodSpecs = new ArrayList<>();
         for (Element element : elements) {
             RouterActivity routerActivity = element.getAnnotation(RouterActivity.class);
             TypeElement typeElement = (TypeElement) element;
@@ -75,19 +77,18 @@ public class RouterProcessor extends AbstractProcessor {
                 bindViewMethodSpecBuilder.addStatement("arg0.put($S, $T.class)", key, typeElement.asType());
             }
             ClassName className = buildActivityHelper(routerActivity.value()[0], activityHelperClassName, (TypeElement) element);
-
-            MethodSpec methodSpec = MethodSpec.methodBuilder("get" + className.simpleName())
-                    .addStatement("return new $T()", className)
-                    .returns(className)
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .build();
-            methodSpecs.add(methodSpec);
+//            MethodSpec methodSpec = MethodSpec.methodBuilder("get" + className.simpleName())
+//                    .addStatement("return new $T()", className)
+//                    .returns(className)
+//                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//                    .build();
+//            methodSpecs.add(methodSpec);
         }
-        TypeSpec typeSpecRouterHelper = TypeSpec.classBuilder(targetModuleName + "RouterHelper")
-                .addModifiers(Modifier.PUBLIC)
-                .addMethods(methodSpecs)
-                .build();
-        JavaFile javaFileRouterHelper = JavaFile.builder("com.thejoyrun.router", typeSpecRouterHelper).build();
+//        TypeSpec typeSpecRouterHelper = TypeSpec.classBuilder(targetModuleName + "RouterHelper")
+//                .addModifiers(Modifier.PUBLIC)
+//                .addMethods(methodSpecs)
+//                .build();
+//        JavaFile javaFileRouterHelper = JavaFile.builder("com.thejoyrun.router", typeSpecRouterHelper).build();
 
 
         JavaFile javaFile = JavaFile.builder("com.thejoyrun.router", typeSpec.addMethod(bindViewMethodSpecBuilder.build()).build()).build();
@@ -96,11 +97,11 @@ public class RouterProcessor extends AbstractProcessor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            javaFileRouterHelper.writeTo(processingEnv.getFiler());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            javaFileRouterHelper.writeTo(getFiler());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return false;
     }
 
@@ -108,7 +109,10 @@ public class RouterProcessor extends AbstractProcessor {
     private ClassName buildActivityHelper(String routerActivityName, ClassName activityHelperClassName, TypeElement typeElement) {
         List<? extends Element> members = elementUtils.getAllMembers(typeElement);
         List<MethodSpec> methodSpecs = new ArrayList<>();
-        ClassName className = ClassName.get("com.thejoyrun.router", typeElement.getSimpleName() + "Helper");
+
+        String builderClassName = routerActivityName.substring(0, 1).toUpperCase() + routerActivityName.substring(1) + "URL";
+
+        ClassName className = ClassName.get("com.thejoyrun.router", builderClassName);
         for (Element element : members) {
             RouterField routerField = element.getAnnotation(RouterField.class);
             if (routerField == null) {
@@ -118,8 +122,8 @@ public class RouterProcessor extends AbstractProcessor {
             if (name.length() >= 2 && name.charAt(0) == 'm' && Character.isUpperCase(name.charAt(1))) {
                 name = name.substring(1, 2).toLowerCase() + name.substring(2);
             }
-            String upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
-            MethodSpec methodSpec = MethodSpec.methodBuilder("with" + upperName)
+//            String upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
+            MethodSpec methodSpec = MethodSpec.methodBuilder(routerField.value()[0])
                     .addParameter(TypeName.get(element.asType()), name)
                     .addStatement(String.format("put(\"%s\",%s )", routerField.value()[0], name))
                     .addStatement("return this")
@@ -133,20 +137,49 @@ public class RouterProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC)
                 .build();
 
-        TypeSpec typeSpec = TypeSpec.classBuilder(typeElement.getSimpleName() + "Helper")
+
+        MethodSpec buildMethodSpec = MethodSpec.methodBuilder("builder")
+                .addStatement(String.format("return new %s()", builderClassName))
+                .addModifiers(Modifier.PUBLIC,Modifier.STATIC)
+                .returns(className)
+                .build();
+
+
+
+
+        TypeSpec typeSpec = TypeSpec.classBuilder(builderClassName)
                 .superclass(activityHelperClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethods(methodSpecs)
                 .addMethod(methodSpec)
+                .addMethod(buildMethodSpec)
                 .build();
         JavaFile javaFile = JavaFile.builder("com.thejoyrun.router", typeSpec).build();
 
+        if (outputModuleName == null){
+            System.out.println("你没有配置 outputModuleName 参数，请参考文档配置");
+            return className;
+        }
         try {
-            javaFile.writeTo(processingEnv.getFiler());
+            javaFile.writeTo(getFiler());
+//            System.out.println(file.getAbsolutePath());
+//            javaFile.writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             e.printStackTrace();
         }
         return className;
+    }
+
+    private File file;
+
+    private File getFiler() {
+        if (outputModuleName == null){
+            return null;
+        }
+        if (file == null) {
+            file = new File(outputModuleName + "/src/main/java");
+        }
+        return file;
     }
 
     @Override
@@ -158,6 +191,8 @@ public class RouterProcessor extends AbstractProcessor {
         for (String key : keys) {
             if ("targetModuleName".equals(key)) {
                 this.targetModuleName = map.get(key);
+            } else if ("outputModuleName".equals(key)) {
+                this.outputModuleName = map.get(key);
             }
             System.out.println(key + " = " + map.get(key));
         }

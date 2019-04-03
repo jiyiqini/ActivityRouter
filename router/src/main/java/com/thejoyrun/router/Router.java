@@ -115,10 +115,20 @@ public class Router {
                 return true;
             }
         }
-
         if (TextUtils.isEmpty(url)) {
             return false;
         }
+        Intent intent = getIntent(context, url);
+        if (intent != null) {
+            context.startActivity(intent);
+            return true;
+        } else {
+            new Throwable(url + "can not startActivity").printStackTrace();
+        }
+        return false;
+    }
+
+     public static Intent getIntent(Context context, String url) {
         Uri uri = Uri.parse(url);
         Class clazz = getActivityClass(url, uri);
         if (clazz != null) {
@@ -127,13 +137,12 @@ public class Router {
             if (!(context instanceof Activity)) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             }
-            context.startActivity(intent);
-            return true;
-        } else {
-            new Throwable(url + "can not startActivity").printStackTrace();
+            return intent;
         }
-        return false;
+        return null;
     }
+
+
 
     private static Class<? extends Activity> getActivityClass(String url, Uri uri) {
         String key;
@@ -164,11 +173,8 @@ public class Router {
         if (TextUtils.isEmpty(url)) {
             return false;
         }
-        Uri uri = Uri.parse(url);
-        Class clazz = getActivityClass(url, uri);
-        if (clazz != null) {
-            Intent intent = new Intent(activity, clazz);
-            intent.setData(uri);
+        Intent intent = getIntent(activity, url);
+        if (intent != null) {
             activity.startActivityForResult(intent, requestCode);
             return true;
         } else {
@@ -187,11 +193,8 @@ public class Router {
         if (TextUtils.isEmpty(url)) {
             return false;
         }
-        Uri uri = Uri.parse(url);
-        Class clazz = getActivityClass(url, uri);
-        if (clazz != null) {
-            Intent intent = new Intent(fragment.getActivity(), clazz);
-            intent.setData(uri);
+        Intent intent = getIntent(fragment.getActivity(), url);
+        if (intent != null) {
             fragment.startActivityForResult(intent, requestCode);
             return true;
         } else {
@@ -209,11 +212,8 @@ public class Router {
         if (TextUtils.isEmpty(url)) {
             return false;
         }
-        Uri uri = Uri.parse(url);
-        Class clazz = getActivityClass(url, uri);
-        if (clazz != null) {
-            Intent intent = new Intent(fragment.getActivity(), clazz);
-            intent.setData(uri);
+        Intent intent = getIntent(fragment.getActivity(), url);
+        if (intent != null) {
             fragment.startActivityForResult(intent, requestCode);
             return true;
         } else {

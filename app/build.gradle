@@ -26,15 +26,16 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile project(':router')
     apt project(':router-compiler')
-    compile project(':other_module')
-    compile project(':base')
+    compile project(':demo-other-module')
+    compile project(':demo-base')
 }
 
-//apt {
-//    arguments {
-//        targetModuleName 'App'
-//    }
-//}
+apt {
+    arguments {
+        targetModuleName 'App'
+        outputModuleName 'demo-router-build'
+    }
+}
 buildscript {
     repositories {
         maven {

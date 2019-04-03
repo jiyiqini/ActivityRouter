@@ -3,8 +3,8 @@ package com.thejoyrun.router;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,14 +26,14 @@ public class ActivityHelper {
         int i = 0;
         for (String key : keys) {
             String value = params.get(key);
-            if (value == null){
+            if (value == null) {
                 continue;
             }
             if (i == 0) {
                 builder.append('?');
             }
             try {
-                builder.append(key).append('=').append(URLEncoder.encode(value,"UTF-8"));
+                builder.append(key).append('=').append(URLEncoder.encode(value, "UTF-8"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -52,32 +52,48 @@ public class ActivityHelper {
     public void startForResult(Activity activity, int requestCode) {
         Router.startActivityForResult(activity, getUrl(), requestCode);
     }
+
     public void startForResult(Fragment fragment, int requestCode) {
         Router.startActivityForResult(fragment, getUrl(), requestCode);
     }
+
     public void startForResult(android.support.v4.app.Fragment fragment, int requestCode) {
         Router.startActivityForResult(fragment, getUrl(), requestCode);
     }
 
-
-    public String put(String key, String value) {
-        return params.put(key, value);
+    /**
+     *
+     * @param context 尽量传入Activity
+     * @return startActivity(getIntent(activity))
+     */
+    public Intent getIntent(Context context){
+        return Router.getIntent(context,getUrl());
     }
 
-    public String put(String key, double value) {
-        return params.put(key, String.valueOf(value));
+
+    public ActivityHelper put(String key, String value) {
+        params.put(key, value);
+        return this;
     }
 
-    public String put(String key, float value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, double value) {
+        params.put(key, String.valueOf(value));
+        return this;
     }
 
-    public String put(String key, int value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, float value) {
+        params.put(key, String.valueOf(value));
+        return this;
     }
 
-    public String put(String key, boolean value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, int value) {
+        params.put(key, String.valueOf(value));
+        return this;
+    }
+
+    public ActivityHelper put(String key, boolean value) {
+        params.put(key, String.valueOf(value));
+        return this;
     }
 
 }
