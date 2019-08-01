@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
+import com.thejoyrun.router.ActivityHelper;
 import com.thejoyrun.router.Router;
 import com.thejoyrun.router.RouterHelper;
 
@@ -35,11 +36,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             intent.putExtra("name", "Wiki");
             intent.putExtra("man", "true");
             intent.putExtra("manger", "true");
+
+
             startActivity(intent);
         } else if (v.getId() == R.id.button2) {
-            Intent intent = new Intent(this, SecondActivity.class);
-            intent.setData(Uri.parse("test://second?uid=233&age=24&name=Wiki"));
-            startActivity(intent);
+//            Intent intent = new Intent(this, SecondActivity.class);
+//            intent.setData(Uri.parse("test://second?uid=233&age=24&name=Wiki"));
+            ActivityHelper.builder("second").put("uid",123).put("age",24).put("name","Wiki").start(this);
+//            startActivity(intent);
         } else if (v.getId() == R.id.button3) {
             Intent intent = new Intent(this, SecondActivity.class);
             intent.setData(Uri.parse("test://second?uid=233&age=24"));

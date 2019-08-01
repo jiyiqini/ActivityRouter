@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ActivityRouter.iml" filepath="$PROJECT_DIR$/.idea/ActivityRouter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ActivityRouter.iml" filepath="$PROJECT_DIR$/ActivityRouter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/other_module/other_module.iml" filepath="$PROJECT_DIR$/other_module/other_module.iml" />
       <module fileurl="file://$PROJECT_DIR$/router/router.iml" filepath="$PROJECT_DIR$/router/router.iml" />

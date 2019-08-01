@@ -1,3 +1,4 @@
+
 package com.thejoyrun.router;
 
 import android.app.Activity;
@@ -25,14 +26,14 @@ public class ActivityHelper {
         int i = 0;
         for (String key : keys) {
             String value = params.get(key);
-            if (value == null){
+            if (value == null) {
                 continue;
             }
             if (i == 0) {
                 builder.append('?');
             }
             try {
-                builder.append(key).append('=').append(URLEncoder.encode(value,"UTF-8"));
+                builder.append(key).append('=').append(URLEncoder.encode(value, "UTF-8"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -51,32 +52,43 @@ public class ActivityHelper {
     public void startForResult(Activity activity, int requestCode) {
         Router.startActivityForResult(activity, getUrl(), requestCode);
     }
+
     public void startForResult(Fragment fragment, int requestCode) {
         Router.startActivityForResult(fragment, getUrl(), requestCode);
     }
+
     public void startForResult(androidx.fragment.app.Fragment fragment, int requestCode) {
         Router.startActivityForResult(fragment, getUrl(), requestCode);
     }
 
 
-    public String put(String key, String value) {
-        return params.put(key, value);
+    public ActivityHelper put(String key, String value) {
+        params.put(key, value);
+        return this;
     }
 
-    public String put(String key, double value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, double value) {
+        params.put(key, String.valueOf(value));
+        return this;
     }
 
-    public String put(String key, float value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, float value) {
+        params.put(key, String.valueOf(value));
+        return this;
     }
 
-    public String put(String key, int value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, int value) {
+        params.put(key, String.valueOf(value));
+        return this;
     }
 
-    public String put(String key, boolean value) {
-        return params.put(key, String.valueOf(value));
+    public ActivityHelper put(String key, boolean value) {
+        params.put(key, String.valueOf(value));
+        return this;
+    }
+
+    public static ActivityHelper builder(String path) {
+        return new ActivityHelper(path);
     }
 
 }
