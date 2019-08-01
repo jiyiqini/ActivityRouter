@@ -157,10 +157,10 @@ apply plugin: 'com.android.application'
 
 dependencies {
     // support-v4,只需要引入 router 或者 router-androidx 其中一个
-    implementation 'com.github.joyrun.ActivityRouter:router:0.8.2'
+    implementation 'com.github.joyrun.ActivityRouter:router:0.8.4'
     // androidx support
-    // implementation 'com.github.joyrun.ActivityRouter:router-androidx:0.8.2'
-    annotationProcessor 'com.github.joyrun.ActivityRouter:router-compiler:0.8.2'
+    // implementation 'com.github.joyrun.ActivityRouter:router-androidx:0.8.4'
+    annotationProcessor 'com.github.joyrun.ActivityRouter:router-compiler:0.8.4'
 }
 ```
 ### 初始化
