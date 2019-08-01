@@ -75,6 +75,10 @@ public class ActivityHelper {
         params.put(key, String.valueOf(value));
         return this;
     }
+    public ActivityHelper put(String key, long value) {
+        params.put(key, String.valueOf(value));
+        return this;
+    }
 
     public ActivityHelper put(String key, int value) {
         params.put(key, String.valueOf(value));
